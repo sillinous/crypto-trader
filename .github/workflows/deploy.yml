@@ -1,0 +1,52 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_GROQ_KEY: ${{ secrets.VITE_GROQ_KEY }}
+          VITE_OR_KEY: ${{ secrets.VITE_OR_KEY }}
+
+      - name: Deploy to Netlify (Production)
+        if: github.ref == 'refs/heads/master'
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: dist
+          production-branch: master
+          production-deploy: true
+          deploy-message: "Deploy from GitHub Actions — ${{ github.sha }}"
+          netlify-config-path: ./netlify.toml
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: f4c11916-dcbb-4e60-be9e-10f400d49bcb
+
+      - name: Deploy Preview (PR)
+        if: github.event_name == 'pull_request'
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: dist
+          production-deploy: false
+          deploy-message: "PR Preview — ${{ github.event.pull_request.title }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: f4c11916-dcbb-4e60-be9e-10f400d49bcb
