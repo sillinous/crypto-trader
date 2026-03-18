@@ -83,7 +83,7 @@ function MetricCard({ label, value, color, sub }) {
   );
 }
 
-export default function Backtester({ strategy, onResult }) {
+export default function Backtester({ strategy, onResult, onApplyStrategy }) {
   const [pair, setPair] = useState("BTCUSDT");
   const [tf, setTf] = useState("1h");
   const [capital, setCapital] = useState(10000);
@@ -230,8 +230,8 @@ export default function Backtester({ strategy, onResult }) {
             <div style={{padding:14,borderRadius:8,background:"rgba(0,200,150,0.06)",border:`1px solid ${T.green}22`,marginBottom:12}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
                 <div style={{fontWeight:700,color:T.green,fontSize:12}}>✨ Improved Strategy: {aiImproved.name}</div>
-                <button onClick={()=>{/* apply via parent */}} style={{padding:"4px 10px",borderRadius:5,background:`${T.green}22`,border:`1px solid ${T.green}44`,color:T.green,cursor:"pointer",fontSize:10,fontWeight:700}}>
-                  Apply
+                <button onClick={()=>onApplyStrategy?.(aiImproved)} style={{padding:"4px 10px",borderRadius:5,background:`${T.green}22`,border:`1px solid ${T.green}44`,color:T.green,cursor:"pointer",fontSize:10,fontWeight:700}}>
+                  ✓ Apply Strategy
                 </button>
               </div>
               <pre style={{fontSize:10,color:T.mute,overflow:"auto",margin:0,lineHeight:1.5}}>{JSON.stringify(aiImproved,null,2)}</pre>

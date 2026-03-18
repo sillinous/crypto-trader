@@ -9,6 +9,7 @@ import Optimizer from "./components/Optimizer.jsx";
 import RiskDashboard from "./components/RiskDashboard.jsx";
 import StrategyFactory from "./components/StrategyFactory.jsx";
 import StrategyRefiner from "./components/StrategyRefiner.jsx";
+import Settings from "./components/Settings.jsx";
 import { DEFAULT_STRATEGY } from "./strategy.js";
 
 const T = { bg:"#0d0d0f", panel:"#0e0f18", border:"#1e2030", text:"#e2e8f0", mute:"#475569", green:"#00c896", amber:"#f59e0b", red:"#ef4444", blue:"#3b82f6" };
@@ -24,6 +25,7 @@ const NAV = [
   { id:"exchange", icon:"💱", label:"Exchange",         desc:"crypto.com trading" },
   { id:"optimize", icon:"🔬", label:"Optimizer",        desc:"Parameter sweep" },
   { id:"risk",     icon:"🛡️",  label:"Risk",             desc:"Dashboard + Kelly" },
+  { id:"settings", icon:"⚙️",  label:"Settings",         desc:"API keys + preferences" },
 ];
 
 export default function App() {
@@ -141,7 +143,8 @@ export default function App() {
           {view==="refine"   && <StrategyRefiner strategy={strategy} backtestResult={backtestResult} setStrategy={s => { updateStrategy(s); }}/>}
           {view==="strategy" && <StrategyBuilder strategy={strategy} setStrategy={updateStrategy} onRun={()=>setView("backtest")} onRefine={()=>setView("refine")}/>}
           {view==="pine"     && <PineEditor strategy={strategy} setStrategy={updateStrategy}/>}
-          {view==="backtest" && <Backtester strategy={strategy} onResult={r=>{setBacktestResult(r);}}/>}
+          {view==="backtest" && <Backtester strategy={strategy} onResult={r=>{setBacktestResult(r);}} onApplyStrategy={s=>{updateStrategy(s); setView("strategy");}}/>}
+          {view==="settings" && <Settings />}
           {view==="signals"  && <SignalMonitor strategy={strategy}/>}
           {view==="exchange" && <Exchange />}
           {view==="optimize" && <Optimizer strategy={strategy} setStrategy={updateStrategy}/>}
